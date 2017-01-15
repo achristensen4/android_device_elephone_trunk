@@ -102,7 +102,7 @@ on boot
     chmod 0664 /sys/class/sensors/bma2x2-accel/poll_delay
 
     # Adaptive LMK
-    write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
+    write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 0
     write /sys/module/lowmemorykiller/parameters/vmpressure_file_min 81250
 
 on init
@@ -113,7 +113,7 @@ on property:service.bootanim.exit=1
     write /sys/block/zram0/comp_algorithm lz4
     swapon_all fstab.qcom
     write /proc/sys/vm/page-cluster 0
-    write /proc/sys/vm/swappiness 100
+    write /proc/sys/vm/swappiness 0
 
 service charger /charger
     class charger
@@ -126,7 +126,7 @@ service vm_bms /system/bin/vm_bms
 
 on charger
    wait /dev/block/bootdevice/by-name/system
-   mount ext4 /dev/block/bootdevice/by-name/system /system ro barrier=1
+   mount ext4 /dev/block/bootdevice/by-name/system /system rw barrier=1
    chown root system /sys/class/power_supply/bms/current_now
    chown root system /sys/class/power_supply/bms/voltage_ocv
    chmod 0664 /sys/class/power_supply/bms/current_now
@@ -143,13 +143,13 @@ on charger
    write /sys/module/lpm_levels/system/cpu1/pc/idle_enabled Y
    write /sys/module/lpm_levels/system/cpu2/pc/idle_enabled Y
    write /sys/module/lpm_levels/system/cpu3/pc/idle_enabled Y
-   write /sys/module/lpm_levels/system/cpu0/pc/suspend_enabled N
+   write /sys/module/lpm_levels/system/cpu0/pc/suspend_enabled Y
    write /sys/module/lpm_levels/system/cpu1/pc/suspend_enabled Y
    write /sys/module/lpm_levels/system/cpu2/pc/suspend_enabled Y
    write /sys/module/lpm_levels/system/cpu3/pc/suspend_enabled Y
    write /sys/module/lpm_levels/system/l2-pc/idle_enabled Y
    write /sys/module/lpm_levels/system/l2-cache-active/idle_enabled Y
    write /sys/module/lpm_levels/system/l2-pc/suspend_enabled Y
-   write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
+   write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
    start vm_bms
 
